@@ -25,7 +25,7 @@ new client.Gauge({
     const zdb = new ZDB(runtimeDir)
 
     // Set the mesure on all the column family
-    const columnFamiliesCount = await zdb.ColumnFamiliesCount()
+    const columnFamiliesCount = await zdb.MemoizedColumnFamiliesCount()
 
     columnFamiliesCount?.forEach((columnFamilyCount, columnFamiliesName) =>
       this.set(
@@ -43,7 +43,7 @@ new client.Gauge({
     this.reset()  // remove all values from last iteration
     const zdb = new ZDB(runtimeDir)
 
-    const incidentCountPerMessage = await zdb.getIncidentsMessageCount()
+    const incidentCountPerMessage = await zdb.MemoizedGetIncidentsMessageCount()
 
     //set the measure
     incidentCountPerMessage?.forEach((count, message) => {

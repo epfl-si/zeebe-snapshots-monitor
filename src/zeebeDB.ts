@@ -3,6 +3,10 @@ import levelup from "levelup";
 import {columnFamiliesNames, ZbColumnFamilies} from "./zbColumnFamilies";
 import { Buffer } from 'node:buffer'
 import {unpack} from "msgpackr";
+import memoizee from 'memoizee';
+
+
+const CACHE_TIMEOUT = 300000  // 5 minutes
 
 /**
  * @param cfName The column family name as a fully typed-out string, e.g. "PROCESS_CACHE_BY_ID_AND_VERSION".
@@ -86,6 +90,8 @@ export class ZDB extends levelup {
     }
   }
 
+  MemoizedColumnFamiliesCount = memoizee(this.ColumnFamiliesCount, { maxAge: CACHE_TIMEOUT, promise: true })
+
   async getIncidentsMessageCount() {
     await this.refresh()
 
@@ -114,4 +120,6 @@ export class ZDB extends levelup {
       return new Map<string, number>()
     }
   }
+
+  MemoizedGetIncidentsMessageCount = memoizee(this.getIncidentsMessageCount, { maxAge: CACHE_TIMEOUT, promise: true })
 }
